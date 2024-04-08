@@ -1,0 +1,11 @@
+{
+  "dataset_path": "./ParisHousing.csv",
+  "target_column": "price",
+  "input_features": ["squareMeters", "numberOfRooms", "numPrevOwners", "cityPartRange", "hasStormProtector"],
+  "number_terms": 5,
+  "test_size": 0.2,
+  "random_seed": 333,
+  "need_calc_correlation_matrix": false,
+  "need_calc_without_training": false,
+  "membership": 0
+}
