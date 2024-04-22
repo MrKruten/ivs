@@ -1,7 +1,8 @@
 {
   "dataset_path": "./ParisHousing.csv",
   "target_column": "price",
-  "input_features": ["squareMeters", "numberOfRooms", "numPrevOwners", "cityPartRange", "hasStormProtector"],
+  "input_features": ["squareMeters", "numberOfRooms", "numPrevOwners", "cityPartRange"],
+  "log_path": "./train/l_4_t_3_m_0/",
   "number_terms": 3,
   "test_size": 0.2,
   "random_seed": 333,

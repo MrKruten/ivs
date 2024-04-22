@@ -1,12 +1,14 @@
 import copy
 import numpy as np
+import pickle
 
 from modelErrors import calculate_mse
 from mamdani import compute_rule_activations, activate_conclusions, defuzzify_center_of_gravity_single_point
+from helpers import create_file_inside_of_dir
 
 
 class GeneticAlg:
-    def __init__(self, rules, X_train, y_train, population_size: int, elite_size: int, max_epochs: int):
+    def __init__(self, rules, X_train, y_train, population_size: int, elite_size: int, max_epochs: int, log_path: str):
         self.rules = rules
         self.X_train = X_train
         self.y_train = y_train
@@ -16,6 +18,10 @@ class GeneticAlg:
         self.best_loss = float('inf')
         self.loss_history = []
         self._antecedent_params_count = self._calculate_antecedent_params_counts()
+        self.txt_file_path = log_path + "gen.txt"
+        self.rules_file_path = log_path + "gen.pkl"
+        create_file_inside_of_dir(log_path, "gen.txt")
+        create_file_inside_of_dir(log_path, "gen.pkl")
 
     def _calculate_antecedent_params_counts(self):
         counts = []
@@ -30,8 +36,9 @@ class GeneticAlg:
             fitness_scores = self._calc_fitness(population)
             elite_indices = np.argsort(fitness_scores)[:self.elite_size]
             elite_population = [population[i] for i in elite_indices]
-            if min(fitness_scores) < self.best_loss:
-                self.best_loss = min(fitness_scores)
+            min_scores = min(fitness_scores)
+            if min_scores < self.best_loss:
+                self.best_loss = min_scores
                 self._update_rules_params(elite_population[0])
 
             new_population = elite_population
@@ -42,8 +49,13 @@ class GeneticAlg:
                 new_population.append(child)
 
             population = new_population
-            self.loss_history.append(min(fitness_scores))
-            print(f"Epoch {epoch + 1}/{self.max_epochs}, Best Loss: {self.best_loss}")
+            self.loss_history.append(min_scores)
+            text = f"Эпоха {epoch + 1}/{self.max_epochs}, best fitness score: {self.best_loss}"
+            print(text)
+            with open(self.txt_file_path, 'a+') as f:
+                f.write(text + '\n')
+            with open(self.rules_file_path, 'wb') as file:
+                pickle.dump(self.rules, file)
 
         return self.rules, self.loss_history
 
@@ -85,7 +97,10 @@ class GeneticAlg:
                 defuzzified_values.append(
                     defuzzify_center_of_gravity_single_point(activated_conclusions, consequent_centers))
             loss = calculate_mse(self.y_train, defuzzified_values)
-            print('loss - ', loss)
+            text = f"ошибка - {loss}"
+            print(text)
+            with open(self.txt_file_path, 'a+') as file:
+                file.write(text + '\n')
             fitness_scores.append(1 / (1 + loss))
         return fitness_scores
 

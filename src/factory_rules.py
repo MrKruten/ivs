@@ -1,7 +1,7 @@
 from rule import Rule
 from fuzzyterm import FuzzyTerm
 from fuzzyset import FuzzySet
-from memberships import trapezoidal_set, get_trapezoid_params
+from memberships import trapezoid_membership, get_trapezoid_params, gaussian_membership, get_gaussian_params, get_bell_params, bell_membership
 
 
 term_names = {
@@ -16,12 +16,18 @@ term_names = {
 
 
 def create_rules(columns, target_column, target_column_name, number_terms, input_features, num_membership) -> list[Rule]:
-    directory = f'./screens/l_{len(input_features)}_t_{number_terms}/'
+    directory = f'./screens/l_{len(input_features)}_t_{number_terms}_m_{num_membership}/'
     fuzzy_sets = []
 
     if num_membership == 0:
         get_params = get_trapezoid_params
-        membership = trapezoidal_set
+        membership = trapezoid_membership
+    elif num_membership == 1:
+        get_params = get_gaussian_params
+        membership = gaussian_membership
+    elif num_membership == 2:
+        get_params = get_bell_params
+        membership = bell_membership
 
     for index, column in enumerate(columns):
         ranges_of_parameters = get_params(number_terms, max(column), min(column))

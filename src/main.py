@@ -5,6 +5,7 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 import sys
 import json
+import os
 
 from rule import Rule
 from modelErrors import calculate_mse
@@ -15,7 +16,10 @@ from gradient_descent import train_consequents
 
 
 if __name__ == '__main__':
-    config_path = sys.argv[1]
+    if 'MY_CONFIG_PATH' in os.environ:
+        config_path = os.environ['MY_CONFIG_PATH']
+    else:
+        config_path = sys.argv[1]
     with open(config_path) as f:
         config = json.load(f)
 
@@ -88,16 +92,15 @@ if __name__ == '__main__':
         print("\nMean Squared Error (MSE):", mse)
 
     try:
+        print("start gradient descent")
+        train_consequents(X_train=columns, y_train=y1, rules=rules, num_epochs=1000,
+                          initial_learning_rate=0.1, log_path=config['log_path'])
         print("start genetic")
         gen_alg = GeneticAlg(rules=rules, X_train=columns, y_train=y1,
-                             population_size=50, elite_size=5, max_epochs=5)
+                             population_size=30, elite_size=5, max_epochs=1000, log_path=config['log_path'])
         best_antecedent_params, loss_history = gen_alg.train()
-        # После обновления параметров антецедентов необходимо обучить параметры консеквентов
-        print("start gradient descent")
-        train_consequents(X_train=columns, y_train=y1, rules=rules,
-                          initial_learning_rate=0.1, num_epochs=500)
     except Exception as er:
-        print('error')
+        print('error', er)
 
     exit_word = ''
     while exit_word != 'exit':

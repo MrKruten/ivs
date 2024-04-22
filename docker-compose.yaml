@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  trainmodel_1:
+    container_name: train_model_l_4_t_3_m_0
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - .\screens\:/app/screens/:rw
+      - .\train\:/app/train/:rw
+    environment:
+      - MY_CONFIG_PATH=./configs/l_4_t_3_m_0.json
+
+  trainmodel_2:
+    container_name: train_model_l_4_t_3_m_1
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - .\screens\:/app/screens/:rw
+      - .\train\:/app/train/:rw
+    environment:
+      - MY_CONFIG_PATH=./configs/l_4_t_3_m_1.json
+
+  trainmodel_3:
+    container_name: train_model_l_4_t_3_m_2
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - .\screens\:/app/screens/:rw
+      - .\train\:/app/train/:rw
+    environment:
+      - MY_CONFIG_PATH=./configs/l_4_t_3_m_2.json

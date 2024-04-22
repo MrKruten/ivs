@@ -1,9 +1,16 @@
+import pickle
+
 from modelErrors import calculate_mse
 from mamdani import compute_rule_activations, activate_conclusions, defuzzify_center_of_gravity_single_point
+from helpers import create_file_inside_of_dir
 
 
-def train_consequents(X_train, y_train, rules, initial_learning_rate=0.1, num_epochs=1000,
+def train_consequents(X_train, y_train, rules, log_path, initial_learning_rate=0.1, num_epochs=1000,
                       patience=5, decay_rate=0.9):
+    txt_file_path = log_path + "grad.txt"
+    rules_file_path = log_path + "grad.pkl"
+    create_file_inside_of_dir(log_path, "grad.txt")
+    create_file_inside_of_dir(log_path, "grad.pkl")
     learning_rate = initial_learning_rate
     best_loss = float('inf')
     bad_epochs = 0
@@ -45,11 +52,19 @@ def train_consequents(X_train, y_train, rules, initial_learning_rate=0.1, num_ep
             bad_epochs += 1
             if bad_epochs >= patience:
                 learning_rate *= decay_rate
-                if learning_rate < 1e-2:
-                    print("Скорость обучения слишком мала. Прекращение обучения.")
+                if learning_rate < 1e-4:
+                    text = "Скорость обучения слишком мала. Прекращение обучения."
+                    print(text)
+                    with open(txt_file_path, 'a+') as file:
+                        file.write(text + '\n')
                     break
 
-        print(f'Epoch {epoch}, Loss: {total_loss}, Learning Rate: {learning_rate}')
+        text = f'Эпоха {epoch+1}, ошибка: {total_loss}, скорость обучения: {learning_rate}'
+        print(text)
+        with open(txt_file_path, 'a+') as file:
+            file.write(text + '\n')
         losses.append(total_loss)
+        with open(rules_file_path, 'wb') as file:
+            pickle.dump(rules, file)
 
     return consequent_centers, losses
