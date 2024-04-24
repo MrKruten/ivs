@@ -8,6 +8,7 @@ def trapezoid_membership(x: float, parameters: list[float]):
 
 def get_trapezoid_params(count_terms, maximum_of_terms, minimum_of_terms):
     step = (maximum_of_terms - minimum_of_terms) / (count_terms + count_terms - 1)
+    print("trap step ", step)
     result = []
     pos = minimum_of_terms
 
@@ -33,6 +34,7 @@ def bell_membership(x: float, parameters: list[float]) -> float:
 
 def get_gaussian_params(count_terms, maximum_of_terms, minimum_of_terms):
     step = (maximum_of_terms - minimum_of_terms) / (count_terms - 1)
+    print("guas step ", step)
     result = []
     pos = minimum_of_terms
 
@@ -46,6 +48,7 @@ def get_gaussian_params(count_terms, maximum_of_terms, minimum_of_terms):
 
 def get_bell_params(count_terms, maximum_of_terms, minimum_of_terms):
     mean_step = (maximum_of_terms - minimum_of_terms) / (count_terms + count_terms - 1)
+    print("trap step ", mean_step)
     result = []
     mean_pos = minimum_of_terms
 
